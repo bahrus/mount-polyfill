@@ -1,10 +1,10 @@
-# mount-polyfill
+# DOM orchestration: The mount api
 
 Author:  Bruce B. Anderson
 Issues / pr's:  [mount-polyfill](https://github.com/bahrus/mount-polyfill)
 Last Update: 2023-11-13
 
-What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of this proposal are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or at least invoking some action.
+What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or at least invoking some action.
 
 The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035) in userland.
 
@@ -15,9 +15,9 @@ const observe = mount({
    match: 'my-element',
    within: myRootNode,
    import: './my-element.js',
-   doCallbackIf: (matchingElement, import) => customElements.get(matchingElement.localName) === undefined,
-   callback: (matchingElement, import) => customElements.define(matchingElement.localName, import.MyElement)
-})
+   doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
+   callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
+});
 ```
 
 If no import is specified, it would go straight to doCallbackIf.  If no doCallbackIf is specified, it would go straight to callback.
@@ -34,10 +34,10 @@ The "observer" constant above would be an EventTarget, which can be subscribed t
 
 The callback option is optional.  doCallbackIf is also optional, and only applicable if the callback option is specified.
 
-As matches are found (for example, right away if matching elements are immediately found), the imports object would maintain a read-only array of weak references, , along with the imported module:
+As matches are found (for example, right away if matching elements are immediately found), the imports object would maintain a read-only array of weak references, along with the imported module:
 
 ```TypeScript
-interface ImportTargets {
+interface MountContext {
     weakReferences:  readonly WeakRef<Element>[];
     module: any;
 }
@@ -106,7 +106,7 @@ const observer = mount({
    within: document.body,
    loading: 'eager',
    import: './my-element.js',
-   callback: (matchingElement, import) => customElements.define(import.MyElement)
+   callback: (matchingElement, {module}) => customElements.define(module.MyElement)
 })
 ```
 
@@ -118,9 +118,9 @@ The value of "loading" is 'lazy' by default.
 const observer = mount({
    match: '*',
    within: document.body,
-   ifInstanceOf: [HTMLMarqueeElement]
+   ifInstanceOf: [HTMLMarqueeElement],
    import: './my-marquee-element-enhancement.js',
-   callback: (import, matchingElement) => customEnhancements.define('myMarqueeElementEnhancement', import.MyMarqueeElementEnhancement)
+   callback: (matchingElement, {module}) => customEnhancements.define('myMarqueeElementEnhancement', module.MyMarqueeElementEnhancement)
 })
 ```
 
