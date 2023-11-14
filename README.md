@@ -40,7 +40,7 @@ Why not just keep the api to a minimum, and just define a callback?  Or why even
 
 The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
 
-This proposal would also include support for CSS, JSON, HTML module imports.
+This proposal would also include support for CSS, JSON, HTML module imports.  In the case of HTML module imports, an option is provide:  streamTo, where we can specify a target element to stream the HTML module to.
 
 "match" is a css query, and could include multiple matches using the comma separator, i.e. no limitation on CSS expressions.
 
