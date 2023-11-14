@@ -14,8 +14,8 @@ const observe = mount({
    match: 'my-element',
    within: myRootNode,
    import: './my-element.js',
-   doCallbackIf: (import, matchingElement) => customElements.get(matchingElement.localName) === undefined,
-   callback: (import, matchingElement) => customElements.define(matchingElement.localName, import.MyElement)
+   doCallbackIf: (matchingElement, import) => customElements.get(matchingElement.localName) === undefined,
+   callback: (matchingElement, import) => customElements.define(matchingElement.localName, import.MyElement)
 })
 ```
 
@@ -53,7 +53,7 @@ However, we could make the loading even more lazy by specifying intersection opt
 ```JavaScript
 const observer = mount({
    match: 'my-element',
-   within: myRootNode,
+   within: document.body,
    intersectionObserverOptions: {
       rootMargin: "0px",
       threshold: 1.0,
@@ -100,12 +100,26 @@ The link rel=modulepreload option provides an already existing platform support 
 So for this we add option:
 
 ```JavaScript
-const observer = conditionalImport({
-   mount: 'my-element',
+const observer = mount({
+   match: 'my-element',
+   within: document.body,
    loading: 'eager',
    import: './my-element.js',
-   callback: (import, match) => customElements.define(import.MyElement)
+   callback: (matchingElement, import) => customElements.define(import.MyElement)
 })
 ```
 
 The value of "loading" is 'lazy' by default.
+
+## InstanceOf checks
+
+```JavaScript
+const observer = mount({
+   match: '*',
+   within: document.body,
+   ifInstanceOf: [HTMLMarqueeElement]
+   import: './my-marquee-element-enhancement.js',
+   callback: (import, matchingElement) => customEnhancements.define('myMarqueeElementEnhancement', import.MyMarqueeElementEnhancement)
+})
+```
+
