@@ -6,7 +6,7 @@ Last Update: 2023-11-13
 
 What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or at least invoking some action.
 
-The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035) in userland.
+The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035#issuecomment-1806393525) in userland.
 
 To specify the equivalent of what the alternative proposal linked to above would do, we can do the following:
 
@@ -24,7 +24,7 @@ If no import is specified, it would go straight to doCallbackIf.  If no doCallba
 
 Why "mount"?  It is shorter than "orchestrate" and is used quite  bit in current frameworks (whereas orchestrate isn't).
 
-One meaning of "mount" is defined by various dictionaries as "to launch and carry out" which is precisely what we want to do with this api.
+One meaning of "mount" is defined by various dictionaries as "organize and initiate (a campaign or other significant course of action)" which is precisely what we want to do with this api.
 
 The import can also be a function:
 
