@@ -32,7 +32,7 @@ The import can also be a function:
 const observe = mount({
    match: 'my-element',
    within: myRootNode,
-   import: async (matchingElement) => await import('./my-element.js'),
+   import: async (matchingElement, {module}) => await import('./my-element.js'),
    doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
    callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
 });
