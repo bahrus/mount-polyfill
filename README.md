@@ -22,6 +22,20 @@ const observe = mount({
 
 If no import is specified, it would go straight to doCallbackIf.  If no doCallbackIf is specified, it would go straight to callback.
 
+The import can also be a function:
+
+```JavaScript
+const observe = mount({
+   match: 'my-element',
+   within: myRootNode,
+   import: async (matchingElement) => await import('./my-element.js'),
+   doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
+   callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
+});
+```
+
+which would work better with current bundlers, I suspect.  Also, can do interesting things like merge multiple imports into one "module".
+
 Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the returned object provides the ability to subscribe to matching elements, so why not just provide the observing part of the equation?
 
 The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
