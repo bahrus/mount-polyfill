@@ -1,5 +1,8 @@
 # mount-polyfill
 
+Author:  Bruce B. Anderson
+Issues / pr's:  [mount-polyfill](https://github.com/bahrus/mount-polyfill)
+
 What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of this proposal are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or at least invoking some action.
 
 The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035) in userland.
