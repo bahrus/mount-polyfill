@@ -4,7 +4,7 @@ What follows is a more ambitious alternative to [this proposal](https://github.c
 
 The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035) in userland.
 
-To specify the equivalent of what the alternative proposal above would do, we can do the following:
+To specify the equivalent of what the alternative proposal linked to above would do, we can do the following:
 
 ```JavaScript
 const observe = mount({
@@ -12,13 +12,13 @@ const observe = mount({
    within: myRootNode,
    import: './my-element.js',
    doCallbackIf: (import, matchingElement) => customElements.get(matchingElement.localName) === undefined,
-   callback: (import, match) => customElements.define(match.localName, import.MyElement)
+   callback: (import, matchingElement) => customElements.define(matchingElement.localName, import.MyElement)
 })
 ```
 
 If no import is specified, it would go straight to doCallbackIf.  If no doCallbackIf is specified, it would go straight to callback.
 
-Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the observer provides the ability to subscribe to matching elements, why not just provide the observing part of the equation?
+Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the returned object provides the ability to subscribe to matching elements, so why not just provide the observing part of the equation?
 
 The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
 
@@ -48,14 +48,14 @@ By default, the matches would be reported as soon as an element matching the cri
 However, we could make the loading even more lazy by specifying intersection options:
 
 ```JavaScript
-const observer = conditionalImport({
+const observer = mount({
    match: 'my-element',
+   within: myRootNode,
    intersectionObserverOptions: {
       rootMargin: "0px",
       threshold: 1.0,
    },
-   rootNode: myRootNode,
-   import: async () => (await import('./my-element.js'))
+   import: './my-element.js'
 })
 ```
 
@@ -64,12 +64,12 @@ const observer = conditionalImport({
 Unlike traditional CSS @import, CSS Modules don't support specifying different imports based on media queries.  That can be another condition we can attach (and why not throw in container queries, based on the rootNode?):
 
 ```JavaScript
-const observer = conditionalImport({
+const observer = mount({
    match: 'my-element',
+   within: myRootNode,
    mediaMatches: '(max-width: 1250px)',
    containerQuery: '(min-width: 700px)',
-   rootNode: myRootNode,
-   import: async () => (await import('./my-element-small.css', {type: 'css'}))
+   import: ['./my-element-small.css', {type: 'css'}]
 })
 ```
 
@@ -98,9 +98,9 @@ So for this we add option:
 
 ```JavaScript
 const observer = conditionalImport({
-   match: 'my-element',
+   mount: 'my-element',
    loading: 'eager',
-   import: async () => (await import('./my-element.js')),
+   import: './my-element.js',
    callback: (import, match) => customElements.define(import.MyElement)
 })
 ```
