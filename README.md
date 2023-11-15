@@ -17,8 +17,10 @@ const observe = mount({
    match: 'my-element',
    within: myRootNode,
    import: './my-element.js',
-   doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
-   callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
+   act:{
+      if: ({localName}) => customElements.get(localName) === undefined,
+      do: ({localName}, {module}) => customElements.define(localName, module.MyElement)
+   }
 });
 ```
 
