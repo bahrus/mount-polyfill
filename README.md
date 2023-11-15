@@ -1,10 +1,12 @@
 # DOM orchestration: The mount api
 
 Author:  Bruce B. Anderson
+
 Issues / pr's:  [mount-polyfill](https://github.com/bahrus/mount-polyfill)
+
 Last Update: 2023-11-14
 
-What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or at least invoking some action.  The underlying theme is this api is meant to make it easy for the developer to do the right thing, by encouraging lazy loading. 
+What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or sharing some common element settings, resulting in lower bandwidth.  The underlying theme is this api is meant to make it easy for the developer to do the right thing, by encouraging lazy loading and smaller footprints. 
 
 The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035#issuecomment-1806393525) in userland.
 
@@ -24,7 +26,7 @@ If no import is specified, it would go straight to doCallbackIf.  If no doCallba
 
 Why "mount"?  It is shorter than "orchestrate" and is used quite  bit in current frameworks (whereas orchestrate isn't).
 
-One meaning of "mount" is defined by various dictionaries as "organize and initiate (a campaign or other significant course of action)" which is precisely what we want to do with this api.
+The word mount has multiple meanings, but the that we are leveraging is to "organize and initiate (a campaign or other significant course of action)" which is precisely what we want to do with this api.
 
 The import can also be a function:
 
@@ -111,7 +113,10 @@ Subscribing can be done via:
 
 ```JavaScript
 observer.addEventListener('import', e => {
-  console.log({matchingElement: e.matchingElement, module: e.module});
+  console.log({
+      matchingElement: e.matchingElement, 
+      module: e.module
+   });
 });
 ```
 
