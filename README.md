@@ -2,7 +2,7 @@
 
 Author:  Bruce B. Anderson
 Issues / pr's:  [mount-polyfill](https://github.com/bahrus/mount-polyfill)
-Last Update: 2023-11-13
+Last Update: 2023-11-14
 
 What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or at least invoking some action.  The underlying theme is this api is meant to make it easy for the developer to do the right thing, by encouraging lazy loading. 
 
@@ -40,17 +40,7 @@ const observe = mount({
 
 which would work better with current bundlers, I suspect.  Also, we can do interesting things like merge multiple imports into one "module".
 
-Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the returned object provides the ability to subscribe to matching elements, so why not just provide the observing part of the equation?
-
-The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
-
-This api doesn't open up some ability developers currently lack.  Rather, it strives to make it easy to "declaratively" do common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
-
-1.  Give the developer a strong signal to do the right thing, by making lazy loading easy, to the benefit of users with expensive networks.
-2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
-3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, we may reduce cpu cycles as well.  
-
-This proposal would also include support for CSS, JSON, HTML module imports.  In the case of HTML module imports, an option is provide:  streamTo, where we can specify a target element to stream the HTML module to.
+This proposal would also include support for CSS, JSON, HTML module imports.  
 
 "match" is a css query, and could include multiple matches using the comma separator, i.e. no limitation on CSS expressions.
 
@@ -67,7 +57,19 @@ interface MountContext {
 }
 ```
 
-This allows code that comes into being after the matching elements were found, to "get caught up" on all the matches.  
+This allows code that comes into being after the matching elements were found, to "get caught up" on all the matches.
+
+## Benefits of this API
+
+Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the returned object provides the ability to subscribe to matching elements, so why not just provide the observing part of the equation?
+
+The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
+
+This api doesn't open up some ability developers currently lack.  Rather, it strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
+
+1.  Give the developer a strong signal to do the right thing, by making lazy loading easy, to the benefit of users with expensive networks.
+2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
+3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, we may reduce cpu cycles as well.  
 
 ##  Extra lazy loading
 
