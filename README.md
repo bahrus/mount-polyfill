@@ -67,7 +67,9 @@ The answer is I believe it would be useful for bundling engines to be able to ex
 
 This api doesn't open up some ability developers currently lack.  Rather, it strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
 
-1.  Give the developer a strong signal to do the right thing, by making lazy loading easy, to the benefit of users with expensive networks.
+1.  Give the developer a strong signal to do the right thing, by 
+    1.  Making lazy loading easy, to the benefit of users with expensive networks.
+    2.  Supporting "binding from a distance" which can allow SSR to provide common, shared data using the "DRY" philosophy, similar to how CSS can reduce the amount of repetitive styling instructions found inline within the HTML Markup.
 2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
 3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, we may reduce cpu cycles as well.  
 
