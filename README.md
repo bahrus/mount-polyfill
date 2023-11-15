@@ -14,10 +14,12 @@ To specify the equivalent of what the alternative proposal linked to above would
 
 ```JavaScript
 const observe = mount({
-   match: 'my-element',
-   within: myRootNode,
-   import: './my-element.js',
+   sift:{
+      for: 'my-element',
+      within: myRootNode,
+   }
    act:{
+      import: './my-element.js',
       if: ({localName}) => customElements.get(localName) === undefined,
       do: ({localName}, {module}) => customElements.define(localName, module.MyElement)
    }
@@ -34,11 +36,16 @@ The import can also be a function:
 
 ```JavaScript
 const observe = mount({
-   match: 'my-element',
-   within: myRootNode,
-   import: async (matchingElement, {module}) => await import('./my-element.js'),
-   doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
-   callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
+   sift:{
+      for: 'my-element',
+      within: myRootNode,
+   },
+   act:{
+      import: async (matchingElement, {module}) => await import('./my-element.js'),
+      doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
+      callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
+   }
+   
 });
 ```
 

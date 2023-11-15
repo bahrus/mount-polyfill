@@ -8,7 +8,7 @@ export interface ImportContext {
     disconnect(): void;
 
 } 
-export type PipelineProcessor<ReturnType = void> = (element: Element, ctx: ImportContext) => Promise<ReturnType>
+export type PipelineProcessor<ReturnType = void> = (matchingElements: Array<Element>, ctx: ImportContext) => Promise<ReturnType>
 export interface MountInit{
     match: string,
     within: Node,
@@ -20,6 +20,8 @@ export interface MountInit{
         cssMatch?: string,
     },
     import?: ImportString | [ImportString, ImportAssertions] | PipelineProcessor,
-    doCallbackIf?: PipelineProcessor<boolean>,
-    callback?: PipelineProcessor,
+    act?:{
+        if?: PipelineProcessor<boolean>,
+        do?: PipelineProcessor
+    }
 }

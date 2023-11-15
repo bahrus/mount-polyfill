@@ -20,6 +20,7 @@ export class Mount extends EventTarget implements ImportContext{
     async #onMutationEvent(mutationRecords: Array<MutationRecord>){
         const {mountInit} = this;
         const {match, actsOn} = mountInit;
+        const matchingNodes: Array<Node> = [];
         for(const record of mutationRecords){
             const {addedNodes} = record;
             for(const node of addedNodes){
@@ -38,6 +39,7 @@ export class Mount extends EventTarget implements ImportContext{
                         }
                     }
                 }
+                matchingNodes.push(node);
             }
         }
     }
