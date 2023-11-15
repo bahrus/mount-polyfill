@@ -24,9 +24,9 @@ const observe = mount({
 
 If no import is specified, it would go straight to doCallbackIf.  If no doCallbackIf is specified, it would go straight to callback.
 
-Why "mount"?  It is shorter than "orchestrate" and is used quite  bit in current frameworks (whereas orchestrate isn't).
+Why "mount"?  It is shorter than "orchestrate" and is used quite a bit in current frameworks (whereas orchestrate isn't).
 
-The word mount has multiple meanings, but the that we are leveraging is to "organize and initiate (a campaign or other significant course of action)" which is precisely what we want to do with this api.
+The word mount has multiple meanings, but the one that we are leveraging is "to organize and initiate (a campaign or other significant course of action)" which is precisely what we want to do with this api.
 
 The import can also be a function:
 

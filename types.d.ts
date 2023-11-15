@@ -5,18 +5,18 @@ type MediaQuery = string;
 export interface ImportContext {
     mountInit: MountInit,
     refs:  readonly WeakRef<Element>[],
+    disconnect(): void;
 
 } 
 export type PipelineProcessor<ReturnType = void> = (element: Element, ctx: ImportContext) => Promise<ReturnType>
 export interface MountInit{
     match: string,
-    within?: Element | ShadowRoot | DocumentFragment | Node,
+    within: Node,
     intersectionObserverInit?: IntersectionObserverInit,
     mediaMatches?: MediaQuery,
     containerQuery?: MediaQuery,
-    ifInstanceOf?: Array<any>,
     actsOn: {
-        instanceOf?: Array<any>, //[TODO] What's the best way to type this?,
+        instanceOf?: Array<typeof Node>, //[TODO] What's the best way to type this?,
         cssMatch?: string,
     },
     import?: ImportString | [ImportString, ImportAssertions] | PipelineProcessor,
