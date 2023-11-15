@@ -11,15 +11,14 @@ export type PipelineProcessor<ReturnType = void> = (element: Element, ctx: Impor
 export interface MountInit{
     match: string,
     within?: Element | ShadowRoot | DocumentFragment | Node,
-    withinStream?: any,
     intersectionObserverInit?: IntersectionObserverInit,
     mediaMatches?: MediaQuery,
     containerQuery?: MediaQuery,
-    ifInstanceOf?: Array<any>
+    ifInstanceOf?: Array<any>,
     actsOn: {
         instanceOf?: Array<any>, //[TODO] What's the best way to type this?,
         cssMatch?: string,
-    }
+    },
     import?: ImportString | [ImportString, ImportAssertions] | PipelineProcessor,
     doCallbackIf?: PipelineProcessor<boolean>,
     callback?: PipelineProcessor,
