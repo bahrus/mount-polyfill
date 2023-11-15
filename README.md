@@ -38,11 +38,17 @@ const observe = mount({
 });
 ```
 
-which would work better with current bundlers, I suspect.  Also, can do interesting things like merge multiple imports into one "module".
+which would work better with current bundlers, I suspect.  Also, we can do interesting things like merge multiple imports into one "module".
 
 Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the returned object provides the ability to subscribe to matching elements, so why not just provide the observing part of the equation?
 
 The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
+
+This api doesn't open up some ability developers currently lack.  Rather, it strives to make it easy to "declaratively" do common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
+
+1.  Give the developer a strong signal to do the right thing, by making lazy loading easy, to the benefit of users with expensive networks.
+2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
+3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, we may reduce cpu cycles as well.  
 
 This proposal would also include support for CSS, JSON, HTML module imports.  In the case of HTML module imports, an option is provide:  streamTo, where we can specify a target element to stream the HTML module to.
 
