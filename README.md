@@ -14,25 +14,21 @@ To specify the equivalent of what the alternative proposal linked to above would
 
 ```JavaScript
 const observe = mount({
-   sift:{
-      for: 'my-element',
-      within: myRootNode,
-   }
-   act:{
-      import: './my-element.js',
-      if: ({localName}) => customElements.get(localName) === undefined,
-      do: ({localName}, {module}) => customElements.define(localName, module.MyElement)
-   }
+   sift:'my-element',
+   import: './my-element.js',
+   do: ({localName}, {module}) => customElements.define(localName, module.MyElement)
 });
 ```
 
-If no import is specified, it would go straight to doCallbackIf.  If no doCallbackIf is specified, it would go straight to callback.
+If no import is specified, it would go straight to do.
 
 Why "mount"?  It is shorter than "orchestrate" and is used quite a bit in current frameworks (whereas orchestrate isn't).
 
 The word mount has multiple meanings, but the one that we are leveraging is "to organize and initiate (a campaign or other significant course of action)" which is precisely what we want to do with this api.
 
-The import can also be a function:
+This only searches for elements matching 'my-element' outside any shadow DOM.
+
+The import can also be a function, and sift can specify to search within a node:
 
 ```JavaScript
 const observe = mount({
@@ -40,8 +36,9 @@ const observe = mount({
       for: 'my-element',
       within: myRootNode,
    },
+   import: async (matchingElement, {module}) => await import('./my-element.js'),
    act:{
-      import: async (matchingElement, {module}) => await import('./my-element.js'),
+      
       doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
       callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
    }

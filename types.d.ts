@@ -8,10 +8,13 @@ export interface ImportContext {
     disconnect(): void;
 
 } 
-export type PipelineProcessor<ReturnType = void> = (matchingElements: Array<Element>, ctx: ImportContext) => Promise<ReturnType>
+export type PipelineProcessor<ReturnType = void> = (matchingElement: Element, ctx: ImportContext) => Promise<ReturnType>
 export interface MountInit{
-    match: string,
-    within: Node,
+    sift:{
+        for: CSSMatch,
+        within?: Node,
+    }
+    
     intersectionObserverInit?: IntersectionObserverInit,
     mediaMatches?: MediaQuery,
     containerQuery?: MediaQuery,

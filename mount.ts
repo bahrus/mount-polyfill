@@ -19,7 +19,8 @@ export class Mount extends EventTarget implements ImportContext{
 
     async #onMutationEvent(mutationRecords: Array<MutationRecord>){
         const {mountInit} = this;
-        const {match, actsOn} = mountInit;
+        const {sift, actsOn} = mountInit;
+        const {for: match} = sift;
         const matchingNodes: Array<Node> = [];
         for(const record of mutationRecords){
             const {addedNodes} = record;
@@ -39,6 +40,7 @@ export class Mount extends EventTarget implements ImportContext{
                         }
                     }
                 }
+                
                 matchingNodes.push(node);
             }
         }
@@ -46,7 +48,8 @@ export class Mount extends EventTarget implements ImportContext{
 
     async #init(){
         const {mountInit} = this;
-        const {within} = mountInit;
+        const {sift} = mountInit;
+        const {within} = sift;
         if(!(within instanceof Node)) throw 'within must be instance of Node';
         this.#mutationObserver.observe(within, {
             subtree: true,
