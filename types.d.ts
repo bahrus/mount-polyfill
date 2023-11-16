@@ -12,7 +12,6 @@ export type PipelineProcessor<ReturnType = void> = (matchingElement: Element, ct
 export interface ActionPipeline{
     mountIf: PipelineProcessor<boolean>,
     onMount: PipelineProcessor,
-
     onDismount: PipelineProcessor,
 }
 export interface MountInit{
@@ -30,5 +29,4 @@ export interface MountInit{
         cssMatch?: string,
     },
     import?: ImportString | [ImportString, ImportAssertions] | PipelineProcessor,
-    actionPipeline: ActionPipeline
 }
