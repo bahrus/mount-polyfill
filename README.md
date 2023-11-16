@@ -4,7 +4,7 @@ Author:  Bruce B. Anderson
 
 Issues / pr's:  [mount-polyfill](https://github.com/bahrus/mount-polyfill)
 
-Last Update: 2023-11-14
+Last Update: 2023-11-16
 
 What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or sharing some common element settings, resulting in lower bandwidth.  The underlying theme is this api is meant to make it easy for the developer to do the right thing, by encouraging lazy loading and smaller footprints. 
 
@@ -36,13 +36,7 @@ const observe = mount({
       for: 'my-element',
       within: myRootNode,
    },
-   import: async (matchingElement, {module}) => await import('./my-element.js'),
-   act:{
-      
-      doCallbackIf: (matchingElement, {module}) => customElements.get(matchingElement.localName) === undefined,
-      callback: (matchingElement, {module}) => customElements.define(matchingElement.localName, module.MyElement)
-   }
-   
+   import: async (matchingElement, {module}) => await import('./my-element.js')
 });
 ```
 
@@ -50,11 +44,9 @@ which would work better with current bundlers, I suspect.  Also, we can do inter
 
 This proposal would also include support for CSS, JSON, HTML module imports.  
 
-"match" is a css query, and could include multiple matches using the comma separator, i.e. no limitation on CSS expressions.
+"sift" or "sift.for" is a css query, and could include multiple matches using the comma separator, i.e. no limitation on CSS expressions.
 
-The "observer" constant above would be an EventTarget, which can be subscribed to.
-
-The callback option is optional.  doCallbackIf is also optional, and only applicable if the callback option is specified.
+The "observer" constant above is a class instance that inherits from EventTarget, which means it can be subscribed to by outside interests.
 
 As matches are found (for example, right away if matching elements are immediately found), the imports object would maintain a read-only array of weak references, along with the imported module:
 
@@ -69,17 +61,13 @@ This allows code that comes into being after the matching elements were found, t
 
 ## Benefits of this API
 
-Why not just keep the api to a minimum, and just define a callback?  Or why even have a callback?  As we will see below, the returned object provides the ability to subscribe to matching elements, so why not just provide the observing part of the equation?
-
-The answer is I believe it would be useful for bundling engines to be able to expose and categorize in as declarative a manner as possible these common behaviors.
-
-This api doesn't open up some ability developers currently lack.  Rather, it strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
+This api doesn't pry open some ability developers currently lack.  Rather, it strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
 
 1.  Give the developer a strong signal to do the right thing, by 
     1.  Making lazy loading easy, to the benefit of users with expensive networks.
     2.  Supporting "binding from a distance" which can allow SSR to provide common, shared data using the "DRY" philosophy, similar to how CSS can reduce the amount of repetitive styling instructions found inline within the HTML Markup.
 2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
-3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, we may reduce cpu cycles as well.  
+3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, which may reduce cpu cycles as well.  
 
 ##  Extra lazy loading
 
@@ -89,12 +77,14 @@ However, we could make the loading even more lazy by specifying intersection opt
 
 ```JavaScript
 const observer = mount({
-   match: 'my-element',
-   within: document.body,
-   intersectionObserverOptions: {
-      rootMargin: "0px",
-      threshold: 1.0,
-   },
+   sift:{
+      for: 'my-element',
+      within: document.body,
+      havingIntersectionBehavior:{
+         rootMargin: "0px",
+         threshold: 1.0,
+      }
+   }
    import: './my-element.js'
 })
 ```
@@ -105,10 +95,12 @@ Unlike traditional CSS @import, CSS Modules don't support specifying different i
 
 ```JavaScript
 const observer = mount({
-   match: 'my-element',
-   within: myRootNode,
-   mediaMatches: '(max-width: 1250px)',
-   containerQuery: '(min-width: 700px)',
+   sift:{
+      for: 'my-element',
+      within: myRootNode,
+      whereMediaMatches: '(max-width: 1250px)',
+      withContainerQuery: '(min-width: 700px)'
+   }
    import: ['./my-element-small.css', {type: 'css'}]
 })
 ```
