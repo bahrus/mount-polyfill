@@ -14,6 +14,9 @@ export interface ActionPipeline{
     onMount: PipelineProcessor,
     onDismount: PipelineProcessor,
 }
+export interface MountOptions{
+    once?: boolean,
+}
 export interface MountInit{
     sift:{
         for: CSSMatch,

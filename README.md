@@ -61,7 +61,7 @@ This allows code that comes into being after the matching elements were found, t
 
 ## Benefits of this API
 
-This api doesn't pry open some ability developers currently lack.  Rather, it strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
+This api doesn't pry open some ability developers currently lack, with at least one possible exception.  It is unclear how to use mutation observers to observe changes to [custom state](https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet).  Rather, it strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
 
 1.  Give the developer a strong signal to do the right thing, by 
     1.  Making lazy loading easy, to the benefit of users with expensive networks.
@@ -80,7 +80,7 @@ const observer = mount({
    sift:{
       for: 'my-element',
       within: document.body,
-      havingIntersectionBehavior:{
+      mountIf:{
          rootMargin: "0px",
          threshold: 1.0,
       }
