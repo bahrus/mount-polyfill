@@ -20,7 +20,7 @@
         const observer = new MutationObserver((arr) => {
             console.log(arr, "callback that runs when observer is triggered");
         });
-        observer.observe('div', mutationObserverInit);
+        observer.observe(div, mutationObserverInit);
 
         function modify(){
             span.setAttribute('test', 'hello');
