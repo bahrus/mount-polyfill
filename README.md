@@ -83,7 +83,7 @@ By default, the matches would be reported as soon as an element matching the cri
 However, we could make the loading even more lazy by specifying intersection options:
 
 ```JavaScript
-const observer = mountObserver({
+const observer = new MountObserver({
    match: 'my-element',
    whereElementIntersectsWith:{
       rootMargin: "0px",
@@ -98,7 +98,7 @@ const observer = mountObserver({
 Unlike traditional CSS @import, CSS Modules don't support specifying different imports based on media queries.  That can be another condition we can attach (and why not throw in container queries, based on the rootNode?):
 
 ```JavaScript
-const observer = mountObserver({
+const observer = new MountObserver({
    match: 'my-element',
    whereMediaMatches: '(max-width: 1250px)',
    whereSizeOfContainerMatches: '(min-width: 700px)'
