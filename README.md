@@ -28,7 +28,7 @@ The extra flexibility this new primitive would provide could be quite useful to 
 To specify the equivalent of what the alternative proposal linked to above would do, we can do the following:
 
 ```JavaScript
-const observer = mountObserver({
+const observer = new MountObserver({
    match:'my-element',
    import: './my-element.js',
    do: {
@@ -49,11 +49,11 @@ This only searches for elements matching 'my-element' outside any shadow DOM.
 The import can also be a function, and sift can specify to search within a node:
 
 ```JavaScript
-const observe = mountObserver({
+const observer = new MountObserver({
    match: 'my-element',
    import: async (matchingElement, {module}) => await import('./my-element.js')
 });
-observe(myRootNode);
+observer.observe(myRootNode);
 ```
 
 which would work better with current bundlers, I suspect.  Also, we can do interesting things like merge multiple imports into one "module".
@@ -74,8 +74,6 @@ interface MountContext {
 ```
 
 This allows code that comes into being after the matching elements were found, to "get caught up" on all the matches. -->
-
-
 
 
 ##  Extra lazy loading
