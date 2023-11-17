@@ -4,7 +4,7 @@ export function mount(init: MountInit){
 
 }
 
-export class Mount extends EventTarget implements ImportContext{
+export class MountObserver extends EventTarget implements ImportContext{
     #refs: Array<WeakRef<Element>> = [];
     //TODO share mutation observers?
     #mutationObserver: MutationObserver;
@@ -14,7 +14,7 @@ export class Mount extends EventTarget implements ImportContext{
     constructor(public mountInit: MountInit){
         super();
         this.#mutationObserver = new MutationObserver(this.#onMutationEvent);
-        this.#init();
+        //this.#init();
     }
 
     async #onMutationEvent(mutationRecords: Array<MutationRecord>){
@@ -46,7 +46,7 @@ export class Mount extends EventTarget implements ImportContext{
         }
     }
 
-    async #init(){
+    async observe(){
         const {mountInit} = this;
         const {sift} = mountInit;
         const {within} = sift;
@@ -57,7 +57,7 @@ export class Mount extends EventTarget implements ImportContext{
         });
     }
 
-    disconnect(){
+    unobserve(){
         this.#mutationObserver.disconnect();
     }
 

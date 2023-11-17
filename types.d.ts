@@ -5,7 +5,8 @@ type MediaQuery = string;
 export interface ImportContext {
     mountInit: MountInit,
     refs:  readonly WeakRef<Element>[],
-    disconnect(): void;
+    observe(): void;
+    unobserve(): void;
 
 } 
 export type PipelineProcessor<ReturnType = void> = (matchingElement: Element, ctx: ImportContext) => Promise<ReturnType>;
@@ -13,7 +14,6 @@ export interface ActionPipeline{
     mountIf: PipelineProcessor<boolean>,
     onMount: PipelineProcessor,
     onDismount: PipelineProcessor,
-    onConnect: PipelineProcessor,
     onDisconnect: PipelineProcessor,
 }
 export interface MountOptions{

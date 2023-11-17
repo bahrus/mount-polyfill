@@ -13,7 +13,7 @@ The extra flexibility this new primitive would provide could be quite useful to 
 To specify the equivalent of what the alternative proposal linked to above would do, we can do the following:
 
 ```JavaScript
-const observe = mount({
+const observe = mountObserver({
    sift:'my-element',
    import: './my-element.js',
    do: ({localName}, {module}) => customElements.define(localName, module.MyElement)
@@ -31,7 +31,7 @@ This only searches for elements matching 'my-element' outside any shadow DOM.
 The import can also be a function, and sift can specify to search within a node:
 
 ```JavaScript
-const observe = mount({
+const observe = mountObserver({
    sift:{
       for: 'my-element',
       within: myRootNode,
@@ -78,7 +78,7 @@ By default, the matches would be reported as soon as an element matching the cri
 However, we could make the loading even more lazy by specifying intersection options:
 
 ```JavaScript
-const observer = mount({
+const observer = mountObserver({
    sift:{
       for: 'my-element',
       within: document.body,
@@ -96,7 +96,7 @@ const observer = mount({
 Unlike traditional CSS @import, CSS Modules don't support specifying different imports based on media queries.  That can be another condition we can attach (and why not throw in container queries, based on the rootNode?):
 
 ```JavaScript
-const observer = mount({
+const observer = mountObserver({
    sift:{
       for: 'my-element',
       within: myRootNode,
@@ -112,6 +112,20 @@ const observer = mount({
 Subscribing can be done via:
 
 ```JavaScript
+observer.addEventListener('connect', e => {
+  console.log({
+      matchingElement: e.matchingElement, 
+      module: e.module
+   });
+});
+
+observer.addEventListener('disconnect', e => {
+  console.log({
+      matchingElement: e.matchingElement, 
+      module: e.module
+   });
+});
+
 observer.addEventListener('mount', e => {
   console.log({
       matchingElement: e.matchingElement, 
