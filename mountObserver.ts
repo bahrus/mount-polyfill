@@ -43,10 +43,9 @@ export class MountObserver extends EventTarget implements ImportContext{
         }
     }
 
-    async observe(within: Node){
+    observe(within: Node){
         const {mountInit} = this;
         const {sift} = mountInit;
-        const {within} = sift;
         if(!(within instanceof Node)) throw 'within must be instance of Node';
         this.#mutationObserver.observe(within, {
             subtree: true,
@@ -54,7 +53,7 @@ export class MountObserver extends EventTarget implements ImportContext{
         });
     }
 
-    unobserve(){
+    unobserve(within: Node){
         this.#mutationObserver.disconnect();
     }
 

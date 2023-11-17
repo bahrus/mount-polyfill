@@ -6,21 +6,39 @@ Issues / pr's:  [mount-polyfill](https://github.com/bahrus/mount-polyfill)
 
 Last Update: 2023-11-16
 
-What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mount api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or sharing some common element settings, resulting in lower bandwidth.  The underlying theme is this api is meant to make it easy for the developer to do the right thing, by encouraging lazy loading and smaller footprints. 
+## Benefits of this API
+
+What follows is a more ambitious alternative to [this proposal](https://github.com/w3c/webcomponents/issues/782).  The goals of the mountObserver api are larger, and less focused on registering custom elements.  In fact, this proposal is trying to address a large number of use cases in one api.  It is basically mapping common filtering conditions in the DOM, to common actions, like importing a resource, or sharing some common element settings, resulting in lower bandwidth.  The underlying theme is this api is meant to make it easy for the developer to do the right thing, by encouraging lazy loading and smaller footprints. 
+
+This api doesn't pry open some ability developers currently lack, with at least one possible exception.  It is unclear how to use mutation observers to observe changes to [custom state](https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet). 
+ 
+Even if that capability were added to mutation observers, the mountObserver api strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
+
+1.  Give the developer a strong signal to do the right thing, by 
+    1.  Making lazy loading easy, to the benefit of users with expensive networks.
+    2.  Supporting "binding from a distance" which can allow SSR to provide common, shared data using the "DRY" philosophy, similar to how CSS can reduce the amount of repetitive styling instructions found inline within the HTML Markup.
+2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
+3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, which may reduce cpu cycles as well.  
+
 
 The extra flexibility this new primitive would provide could be quite useful to things other than custom elements, such as implementing [custom enhancements](https://github.com/WICG/webcomponents/issues/1000) as well as [binding from a distance](https://github.com/WICG/webcomponents/issues/1035#issuecomment-1806393525) in userland.
+
+## First use case -- lazy loading custom elements
 
 To specify the equivalent of what the alternative proposal linked to above would do, we can do the following:
 
 ```JavaScript
-const observe = mountObserver({
-   sift:'my-element',
+const observer = mountObserver({
+   match:'my-element',
    import: './my-element.js',
-   do: ({localName}, {module}) => customElements.define(localName, module.MyElement)
+   do: {
+      onMount: ({localName}, {module}) => if(!customElements.get(localName)) customElements.define(localName, module.MyElement);
+   }
 });
+observer.observe(document);
 ```
 
-If no import is specified, it would go straight to do.
+If no import is specified, it would go straight to do.*.
 
 Why "mount"?  It is shorter than "orchestrate" and is used quite a bit in current frameworks (whereas orchestrate isn't).
 
@@ -32,23 +50,21 @@ The import can also be a function, and sift can specify to search within a node:
 
 ```JavaScript
 const observe = mountObserver({
-   sift:{
-      for: 'my-element',
-      within: myRootNode,
-   },
+   match: 'my-element',
    import: async (matchingElement, {module}) => await import('./my-element.js')
 });
+observe(myRootNode);
 ```
 
 which would work better with current bundlers, I suspect.  Also, we can do interesting things like merge multiple imports into one "module".
 
 This proposal would also include support for CSS, JSON, HTML module imports.  
 
-"sift" or "sift.for" is a css query, and could include multiple matches using the comma separator, i.e. no limitation on CSS expressions.
+"match" is a css query, and could include multiple matches using the comma separator, i.e. no limitation on CSS expressions.
 
 The "observer" constant above is a class instance that inherits from EventTarget, which means it can be subscribed to by outside interests.
 
-As matches are found (for example, right away if matching elements are immediately found), the imports object would maintain a read-only array of weak references, along with the imported module:
+<!-- As matches are found (for example, right away if matching elements are immediately found), the imports object would maintain a read-only array of weak references, along with the imported module:
 
 ```TypeScript
 interface MountContext {
@@ -57,19 +73,10 @@ interface MountContext {
 }
 ```
 
-This allows code that comes into being after the matching elements were found, to "get caught up" on all the matches.
+This allows code that comes into being after the matching elements were found, to "get caught up" on all the matches. -->
 
-## Benefits of this API
 
-This api doesn't pry open some ability developers currently lack, with at least one possible exception.  It is unclear how to use mutation observers to observe changes to [custom state](https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet). 
- 
-Even if that capability were added to mutation observers the mount api strives to make it *easy* to achieve what is currently common but difficult to implement functionality.  The amount of code necessary to accomplish these common tasks designed to improve the user experience is significant.  Building it into the platform would potentially:
 
-1.  Give the developer a strong signal to do the right thing, by 
-    1.  Making lazy loading easy, to the benefit of users with expensive networks.
-    2.  Supporting "binding from a distance" which can allow SSR to provide common, shared data using the "DRY" philosophy, similar to how CSS can reduce the amount of repetitive styling instructions found inline within the HTML Markup.
-2.  Allow numerous components / libraries to leverage this common functionality, which could potentially significantly reduce bandwidth.
-3.  Potentially by allowing the platform to do more work in the low-level (c/c++/rust?) code, without as much context switching into the JavaScript memory space, which may reduce cpu cycles as well.  
 
 ##  Extra lazy loading
 
@@ -79,16 +86,13 @@ However, we could make the loading even more lazy by specifying intersection opt
 
 ```JavaScript
 const observer = mountObserver({
-   sift:{
-      for: 'my-element',
-      within: document.body,
-      whereElementIntersectsWith:{
-         rootMargin: "0px",
-         threshold: 1.0,
-      }
-   }
+   match: 'my-element',
+   whereElementIntersectsWith:{
+      rootMargin: "0px",
+      threshold: 1.0,
+   },
    import: './my-element.js'
-})
+});
 ```
 
 ## Media / container queries
@@ -97,12 +101,9 @@ Unlike traditional CSS @import, CSS Modules don't support specifying different i
 
 ```JavaScript
 const observer = mountObserver({
-   sift:{
-      for: 'my-element',
-      within: myRootNode,
-      whereMediaMatches: '(max-width: 1250px)',
-      whereSizeOfContainerMatches: '(min-width: 700px)'
-   }
+   match: 'my-element',
+   whereMediaMatches: '(max-width: 1250px)',
+   whereSizeOfContainerMatches: '(min-width: 700px)'
    import: ['./my-element-small.css', {type: 'css'}]
 })
 ```
@@ -113,12 +114,8 @@ Subscribing can be done via:
 
 ```JavaScript
 observer.addEventListener('connect', e => {
-  console.log({
-      matchingElement: e.matchingElement, 
-      module: e.module
-   });
-});
 
+})
 observer.addEventListener('disconnect', e => {
   console.log({
       matchingElement: e.matchingElement, 
@@ -140,6 +137,11 @@ observer.addEventListener('dismount', e => {
    });
 });
 ```
+
+If an element is moved from one parent DOM element to another:
+
+1)  dismount and disconnect events are both dispatched (order TBD).
+2)  When the element is added, if it is added within the rootNode being observed, it will dispatch event "connect".
 
 "mount" occurs the first time (and subsequent times) an element meets all the criteria ("sift.for", "whereSizeOfContainerMatches", etc), "dismount" occurs after an element that previously mounted, no longer matches all the criteria.
 
