@@ -112,13 +112,22 @@ const observer = mount({
 Subscribing can be done via:
 
 ```JavaScript
-observer.addEventListener('import', e => {
+observer.addEventListener('mount', e => {
+  console.log({
+      matchingElement: e.matchingElement, 
+      module: e.module
+   });
+});
+
+observer.addEventListener('dismount', e => {
   console.log({
       matchingElement: e.matchingElement, 
       module: e.module
    });
 });
 ```
+
+"mount" occurs the first time (and subsequent times) an element meets all the criteria ("sift.for", "whereSizeOfContainerMatches", etc), "dismount" occurs after an element that previously mounted, no longer matches all the criteria.
 
 ## Preemptive downloading
 
