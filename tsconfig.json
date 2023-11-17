@@ -8,7 +8,7 @@
 		"strict": true,
 	},
 	"files": [
-		"mountObserver.ts",
+		"MountObserver.ts",
 	],
 	"exclude":[
 		"node_modules"

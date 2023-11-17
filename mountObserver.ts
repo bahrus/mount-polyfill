@@ -1,8 +1,5 @@
 import {MountInit, ImportContext} from './types';
 
-export function mount(init: MountInit){
-
-}
 
 export class MountObserver extends EventTarget implements ImportContext{
     #refs: Array<WeakRef<Element>> = [];
@@ -46,7 +43,7 @@ export class MountObserver extends EventTarget implements ImportContext{
         }
     }
 
-    async observe(){
+    async observe(within: Node){
         const {mountInit} = this;
         const {sift} = mountInit;
         const {within} = sift;

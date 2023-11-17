@@ -5,8 +5,8 @@ type MediaQuery = string;
 export interface ImportContext {
     mountInit: MountInit,
     refs:  readonly WeakRef<Element>[],
-    observe(): void;
-    unobserve(): void;
+    observe(within: Node): void;
+    unobserve(within: Node): void;
 
 } 
 export type PipelineProcessor<ReturnType = void> = (matchingElement: Element, ctx: ImportContext) => Promise<ReturnType>;
@@ -22,7 +22,7 @@ export interface MountOptions{
 export interface MountInit{
     sift:{
         for: CSSMatch,
-        within?: Node,
+        //within?: Node,
         havingIntersectionBehavior?: IntersectionObserver,
         matchingMedia: MediaQuery
     }
