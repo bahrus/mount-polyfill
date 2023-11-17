@@ -148,7 +148,9 @@ const observer = mount({
    within: document.body,
    loading: 'eager',
    import: './my-element.js',
-   callback: (matchingElement, {module}) => customElements.define(module.MyElement)
+   do:{
+      onMount: (matchingElement, {module}) => customElements.define(module.MyElement)
+   }
 })
 ```
 

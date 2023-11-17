@@ -13,6 +13,8 @@ export interface ActionPipeline{
     mountIf: PipelineProcessor<boolean>,
     onMount: PipelineProcessor,
     onDismount: PipelineProcessor,
+    onConnect: PipelineProcessor,
+    onDisconnect: PipelineProcessor,
 }
 export interface MountOptions{
     once?: boolean,
